@@ -53,8 +53,17 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // Lấy sản phẩm với ID đã chọn
+        $sanpham = Product::find($id);
+
+        // Lấy danh sách tất cả sản phẩm
+        $data = Product::all();
+
+        // Trả về view 'products.index' và truyền cả danh sách sản phẩm và sản phẩm đã chọn
+        return view('products.index', compact('data', 'sanpham'));
     }
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -71,13 +80,14 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+
         $filePath = $request->file('hinh_anh')->store('cay', 'public');
         $product = Product::find($id);
         $product->ten_san_pham = $request->ten_san_pham;
         $product->gia = $request->gia;
         $product->mo_ta = $request->mo_ta;
-        $product->hinh_anh = $filePath;;
+        $product->hinh_anh = $filePath;
+        ;
         $product->save();
 
         return redirect()->route('products.index')->with('success', 'Sản phẩm đã được cập nhật.');

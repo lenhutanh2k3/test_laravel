@@ -9,16 +9,30 @@
 </head>
 
 <body>
+
   @if (session('success'))
     <div class="alert alert-success">
-    {{session('success')}}
+      {{ session('success') }}
     </div>
   @endif
   @if (session('error'))
     <div class="alert alert-error">
-    {{session('error')}}
+      {{ session('error') }}
     </div>
   @endif
+  
+  <!-- Hiển thị thông tin sản phẩm nếu có -->
+   @isset($sanpham)
+      <h3>Thông tin sản phẩm</h3> <br>
+      <p>{{$sanpham->id}}</p>
+      <p>{{$sanpham->ten_san_pham}}</p>
+      <p>{{$sanpham->mo_ta}}</p>
+      <p>{{$sanpham->gia}}</p>
+      <img src="{{ asset('storage/' . $sanpham->hinh_anh) }}" alt="Hình sản phẩm" width="80" height="80">
+      <p>{{$sanpham->created_at}}</p>
+      <p>{{$sanpham->updated_at}}</p>
+   @endisset
+
   <div class="container mt-5">
     <h1 class="mb-4">Danh Sách Sản Phẩm</h1>
     <table class="table table-bordered table-hover">
@@ -35,33 +49,32 @@
       </thead>
       <tbody>
         @isset($data)
-      @foreach ($data as $item)
-      <tr>
-      <th scope="row">{{$item->id ?? ''}}</th>
-      <td>{{$item->ten_san_pham ?? ''}}</td>
-      <td>{{ number_format($item->gia, 0, ',', '.') ?? '' }} VND</td>
-      <td>{{$item->mo_ta ?? ''}}</td>
-      <td>
-      @if(!empty($item->hinh_anh))
-      <img src="{{ asset('storage/' . $item->hinh_anh) }}" alt="Hình sản phẩm" width="80" height="80">
-    @else
-      <span>Không có hình</span>
-    @endif
-      </td>
-      <td>
-      <form action="{{ route('products.destroy', $item->id) }}" method="POST">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger">Xóa</button>
-      </form>
-
-      </td>
-      <td>
-      <a href="{{route('products.edit',$item->id)}}" class="btn btn-warning btn-sm">Sửa</a>
-      </td>
-      </tr>
-    @endforeach
-    @endisset
+          @foreach ($data as $item)
+            <tr onclick="window.location='{{ route('products.show', $item->id) }}'" style="cursor: pointer;">
+              <th scope="row">{{ $item->id ?? '' }}</th>
+              <td>{{ $item->ten_san_pham }}</td>
+              <td>{{ number_format($item->gia, 0, ',', '.') ?? '' }} VND</td>
+              <td>{{ $item->mo_ta ?? '' }}</td>
+              <td>
+                @if(!empty($item->hinh_anh))
+                  <img src="{{ asset('storage/' . $item->hinh_anh) }}" alt="Hình sản phẩm" width="80" height="80">
+                @else
+                  <span>Không có hình</span>
+                @endif
+              </td>
+              <td>
+                <form action="{{ route('products.destroy', $item->id) }}" method="POST">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+              </td>
+              <td>
+                <a href="{{ route('products.edit', $item->id) }}" class="btn btn-warning btn-sm">Sửa</a>
+              </td>
+            </tr>
+          @endforeach
+        @endisset
       </tbody>
     </table>
     <a href="{{ route('products.create') }}" class="btn btn-primary">Thêm dữ liệu</a>
@@ -71,4 +84,3 @@
 </body>
 
 </html>
-``
